@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:be_right_bark/widgets/common/buttons/button_large.dart';
+import '/widgets/common/buttons/button_large.dart';
 
   class MarkSpotButton extends StatelessWidget implements PreferredSizeWidget {
 

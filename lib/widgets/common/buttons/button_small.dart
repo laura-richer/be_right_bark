@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 
 class ButtonSmall extends StatelessWidget {
   final String buttonText;
+  final VoidCallback? onPressed;
   final IconData? icon;
+  final IconAlignment? iconAlignment;
 
   const ButtonSmall({
     super.key,
     required this.buttonText,
+    required this.onPressed,
     this.icon,
+    this.iconAlignment,
+
   });
 
   @override
@@ -18,7 +23,10 @@ class ButtonSmall extends StatelessWidget {
 
     if (icon != null) {
       return TextButton.icon(
-        onPressed: () {},
+        iconAlignment: iconAlignment == IconAlignment.start
+          ? IconAlignment.start
+          : IconAlignment.end,
+        onPressed: onPressed,
         style: style,
         label: Text(buttonText),
         icon: Icon(icon),
@@ -26,7 +34,7 @@ class ButtonSmall extends StatelessWidget {
     }
 
     return TextButton(
-      onPressed: () {},
+      onPressed: onPressed,
       style: style,
       child: Text(buttonText),
     );

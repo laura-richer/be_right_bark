@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:be_right_bark/screens/active_spot.dart';
+import 'package:go_router/go_router.dart';
 
 class EllipsePainter extends CustomPainter {
   final Color color;
@@ -43,14 +43,7 @@ class ActiveSpotCard extends StatelessWidget {
         ],
       ),
       child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ActiveSpotScreen(id: id),
-            ),
-          );
-        },
+        onTap: () => context.push('/active-spots/$id'),
         child: Card(
           color: Theme.of(context).colorScheme.onSecondary,
           shadowColor: Colors.transparent,
@@ -77,7 +70,7 @@ class ActiveSpotCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -90,7 +83,8 @@ class ActiveSpotCard extends StatelessWidget {
                 Icon(
                   Icons.chevron_right,
                   size: 40,
-                  color: Theme.of(context).colorScheme.primaryContainer),
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
               ],
             ),
           ),

@@ -35,7 +35,7 @@ ThemeData brbTheme() {
         color: BrbColors.green,
       ),
       titleMedium: GoogleFonts.lilitaOne(
-        fontSize: BrbFontSize.lg,
+        fontSize: BrbFontSize.md,
          color: BrbColors.green,
       ),
       titleSmall: GoogleFonts.lilitaOne(

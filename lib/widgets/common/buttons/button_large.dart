@@ -27,7 +27,7 @@ class ButtonLarge extends StatelessWidget {
           shape: const CircleBorder(),
           shadowColor: Colors.transparent,
           backgroundColor: Theme.of(context).colorScheme.tertiary,
-          fixedSize: const Size(300, 300),
+          fixedSize: const Size(250, 250),
         ),
         onPressed: () {},
         child: Text(buttonText),
