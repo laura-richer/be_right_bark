@@ -7,7 +7,7 @@ import '/widgets/common/buttons/button_large.dart';
 
     @override
     Widget build(BuildContext context) {
-      return ButtonLarge(buttonText: 'Picked up');
+      return ButtonLarge(buttonText: 'Picked up', onPressed:() {},);
     }
 
     @override

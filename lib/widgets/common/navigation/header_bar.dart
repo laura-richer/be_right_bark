@@ -12,6 +12,9 @@ class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
       leading: context.canPop()
         ? IconButton(
           icon: const Icon(Icons.chevron_left),
+          style: IconButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+          ),
           onPressed: () => context.pop(),
         )
       : null,

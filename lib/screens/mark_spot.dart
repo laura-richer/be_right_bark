@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '/widgets/active_spots/list.dart';
+import '/widgets/common/buttons/button_small.dart';
+import '/widgets/mark_spot/button.dart';
 
 class MarkSpotScreen extends StatelessWidget {
     const MarkSpotScreen({super.key});
@@ -6,8 +10,39 @@ class MarkSpotScreen extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Be Right Bark')),
-        body: const Center(child: Text('Mark spot')),
+        body: Column(children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Nearest spot', style: Theme.of(context).textTheme.titleMedium),
+                  ButtonSmall(
+                    buttonText: 'See all',
+                    icon: Icons.arrow_forward,
+                    iconAlignment: IconAlignment.end,
+                    onPressed: () => context.go('/active-spots'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Expanded(
+                child: ActiveSpotsCardList(
+                  count: 1,
+                ),
+              ),
+            ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: MarkSpotButton(),
+            ),
+          ),
+        ],),
       );
     }
   }

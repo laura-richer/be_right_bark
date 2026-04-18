@@ -22,12 +22,13 @@ class ButtonMedium extends StatelessWidget {
         ),
       ],
     ),
-    child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
+    child: FilledButton(
+        style: FilledButton.styleFrom(
           textStyle: Theme.of(context).textTheme.labelMedium,
-          shape: const StadiumBorder(),
+          foregroundColor: Theme.of(context).colorScheme.primary,
           backgroundColor: Theme.of(context).colorScheme.tertiary,
           shadowColor: Colors.transparent,
+          shape: const StadiumBorder(),
         ),
         onPressed: () {},
         child: Text(buttonText),

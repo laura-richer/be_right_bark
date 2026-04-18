@@ -22,15 +22,11 @@ class StylesetterScreen extends StatelessWidget {
             Text('Label medium', style: Theme.of(context).textTheme.labelMedium),
             Text('Label small', style: Theme.of(context).textTheme.labelSmall),
             Text('Body medium', style: Theme.of(context).textTheme.bodyMedium),
-            ButtonLarge(buttonText: 'Large button'),
+            ButtonLarge(buttonText: 'Large button', onPressed:() {},),
             ButtonMedium(buttonText: 'Medium button'),
             ButtonSmall(buttonText: 'Small button', icon: Icons.edit, onPressed:() {},),
             ActiveSpotsCardList(
               shrinkWrap: true,
-              items: [
-                {'title': 'Woodland', 'content': '200m away - Dropped 15mins ago', 'id': '0'},
-                {'title': 'Grassland', 'content': '50m away - Dropped 94mins ago', 'id': '1'},
-              ],
             ),
           ],
         ),

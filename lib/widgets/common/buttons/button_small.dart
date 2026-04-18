@@ -26,10 +26,11 @@ class ButtonSmall extends StatelessWidget {
         iconAlignment: iconAlignment == IconAlignment.start
           ? IconAlignment.start
           : IconAlignment.end,
+        icon: Icon(icon),
         onPressed: onPressed,
         style: style,
         label: Text(buttonText),
-        icon: Icon(icon),
+
       );
     }
 
