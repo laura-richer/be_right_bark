@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 
 class ButtonLarge extends StatelessWidget {
   final String buttonText;
-  final String? subtitle;
   final String? image;
   final VoidCallback? onPressed;
-
 
   const ButtonLarge({
     super.key,
     required this.buttonText,
-    this.subtitle,
     this.image,
     required this.onPressed,
   });
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,21 +40,10 @@ class ButtonLarge extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (image != null) ...[
-              Image.asset(
-                image!,
-                height: 80,
-              ),
+              Image.asset(image!, height: 80),
               const SizedBox(height: 10),
             ],
             Text(buttonText),
-            if (subtitle != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
           ],
         ),
       ),

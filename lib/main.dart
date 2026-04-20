@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'router.dart';
 import 'styles/theme.dart';
+import 'models/location.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(LocationAdapter());
+  await Hive.openBox<Location>('locations'); // typed box
   runApp(const MyApp());
 }
 

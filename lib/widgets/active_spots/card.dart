@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '/models/location.dart';
 
 class EllipsePainter extends CustomPainter {
   final Color color;
@@ -16,16 +17,9 @@ class EllipsePainter extends CustomPainter {
 }
 
 class ActiveSpotCard extends StatelessWidget {
-  final String? title;
-  final String content;
-  final String id;
+  final Location item;
 
-  const ActiveSpotCard({
-    super.key,
-    required this.content,
-    required this.id,
-    this.title,
-  });
+  const ActiveSpotCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +37,7 @@ class ActiveSpotCard extends StatelessWidget {
         ],
       ),
       child: GestureDetector(
-        onTap: () => context.push('/active-spots/$id'),
+        onTap: () => context.push('/active-spots/${item.id}'),
         child: Card(
           color: Theme.of(context).colorScheme.onSecondary,
           shadowColor: Colors.transparent,
@@ -59,7 +53,9 @@ class ActiveSpotCard extends StatelessWidget {
                       children: [
                         CustomPaint(
                           painter: EllipsePainter(
-                            color: Theme.of(context).colorScheme.tertiary.withOpacity(0.3),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.tertiary.withOpacity(0.3),
                           ),
                           child: const SizedBox(width: 20, height: 8),
                         ),
@@ -74,8 +70,16 @@ class ActiveSpotCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        title != null ? Text(title!, style: Theme.of(context).textTheme.titleSmall) : Container(),
-                        Text(content),
+                        item.name != null
+                            ? Text(
+                                item.name!,
+                                style: Theme.of(context).textTheme.titleSmall,
+                              )
+                            : Container(),
+                        Text(
+                          item.latitude.toStringAsFixed(2) +
+                              item.longitude.toStringAsFixed(2),
+                        ),
                       ],
                     ),
                   ],
