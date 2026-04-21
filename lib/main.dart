@@ -3,13 +3,17 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'router.dart';
 import 'styles/theme.dart';
 import 'models/location.dart';
+import 'utils/permissions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
   Hive.registerAdapter(LocationAdapter());
-  await Hive.openBox<Location>('locations'); // typed box
+  await Hive.openBox<Location>('locations');
+
+  await initLocationPermission();
+
   runApp(const MyApp());
 }
 

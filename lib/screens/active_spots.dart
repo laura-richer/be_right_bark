@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import '/widgets/common/buttons/button_small.dart';
+import '/widgets/common/locations_builder.dart';
+import '/widgets/common/user_position_builder.dart';
 import '/widgets/active_spots/list.dart';
-import '/models/location.dart';
 import '/servivces/location.dart';
 
 class ActiveSpotsScreen extends StatefulWidget {
@@ -17,50 +17,44 @@ class _ActiveSpotsScreenState extends State<ActiveSpotsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final locationsBox = Hive.box<Location>('locations');
-
     return Scaffold(
-      body: ValueListenableBuilder(
-        valueListenable: locationsBox.listenable(),
-        builder: (context, Box<Location> locationsBox, _) {
-          return Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Active spots',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  if (locationsBox.isNotEmpty)
-                    ButtonSmall(
-                      buttonText: 'Clear all',
-                      icon: Icons.close,
-                      iconAlignment: IconAlignment.end,
-                      onPressed: () async {
-                        await locationService.clearLocations();
-                      },
+      body: UserPositionBuilder(
+        builder: (context, userPosition) => LocationsBuilder(
+          builder: (context, locations) {
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Active spots',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
-                ],
-              ),
-              SizedBox(height: 12),
-              if (locationsBox.isNotEmpty)
-                Expanded(
-                  child: ValueListenableBuilder(
-                    valueListenable: locationsBox.listenable(),
-                    builder: (context, Box<Location> locationsBox, _) {
-                      return ActiveSpotsCardList(
-                        locations: locationsBox.values.toList(),
-                      );
-                    },
-                  ),
+                    if (locations.isNotEmpty)
+                      ButtonSmall(
+                        buttonText: 'Clear all',
+                        icon: Icons.close,
+                        iconAlignment: IconAlignment.end,
+                        onPressed: () async {
+                          await locationService.clearLocations();
+                        },
+                      ),
+                  ],
                 ),
-
-              if (locationsBox.isEmpty)
-                Text('No marked spots yet (TODO - Prompt here to mark a spot)'),
-            ],
-          );
-        },
+                SizedBox(height: 12),
+                if (locations.isNotEmpty)
+                  Expanded(
+                    child: ActiveSpotsCardList(
+                      locations: locations,
+                      userPosition: userPosition,
+                    ),
+                  ),
+                if (locations.isEmpty)
+                  Text('No marked spots yet (TODO - Prompt here to mark a spot)'),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

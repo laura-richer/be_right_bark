@@ -35,7 +35,7 @@ class StylesetterScreen extends StatelessWidget {
             Text('Label small', style: Theme.of(context).textTheme.labelSmall),
             Text('Body medium', style: Theme.of(context).textTheme.bodyMedium),
             ButtonLarge(buttonText: 'Large button', onPressed: () {}),
-            ButtonMedium(buttonText: 'Medium button'),
+            ButtonMedium(buttonText: 'Medium button', onPressed: () {}),
             ButtonSmall(
               buttonText: 'Small button',
               icon: Icons.edit,

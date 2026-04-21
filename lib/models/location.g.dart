@@ -17,10 +17,9 @@ class LocationAdapter extends TypeAdapter<Location> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Location(
-      id: fields[0] as int,
       latitude: fields[1] as double,
       longitude: fields[2] as double,
-      createdAt: fields[3] as DateTime?,
+      createdAt: fields[3] as DateTime,
       name: fields[4] as String?,
     );
   }
@@ -28,9 +27,7 @@ class LocationAdapter extends TypeAdapter<Location> {
   @override
   void write(BinaryWriter writer, Location obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.id)
+      ..writeByte(4)
       ..writeByte(1)
       ..write(obj.latitude)
       ..writeByte(2)

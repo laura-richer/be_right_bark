@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import '/widgets/active_spots/list.dart';
 import '/widgets/common/buttons/button_small.dart';
+import '/widgets/common/locations_builder.dart';
+import '/widgets/common/user_position_builder.dart';
 import '/widgets/mark_spot/button.dart';
-import '/models/location.dart';
 
 class MarkSpotScreen extends StatelessWidget {
   const MarkSpotScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final locationsBox = Hive.box<Location>('locations');
-
     return Scaffold(
-      body: ValueListenableBuilder(
-        valueListenable: locationsBox.listenable(),
-        builder: (context, Box<Location> locationsBox, _) {
+      body: UserPositionBuilder(
+        builder: (context, userPosition) => LocationsBuilder(
+        builder: (context, locations) {
           return Column(
             children: [
-              if (locationsBox.isNotEmpty)
+              if (locations.isNotEmpty)
                 Expanded(
                   flex: 1,
                   child: Column(
@@ -41,24 +39,20 @@ class MarkSpotScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 12),
                       Expanded(
-                        child: ValueListenableBuilder(
-                          valueListenable: locationsBox.listenable(),
-                          builder: (context, Box<Location> locationsBox, _) {
-                            return ActiveSpotsCardList(
-                              count: 1,
-                              locations: locationsBox.values.toList(),
-                            );
-                          },
+                        child: ActiveSpotsCardList(
+                          count: 1,
+                          locations: locations,
+                          userPosition: userPosition,
                         ),
                       ),
                     ],
                   ),
                 ),
-
               Expanded(flex: 2, child: Center(child: MarkSpotButton())),
             ],
           );
         },
+      ),
       ),
     );
   }

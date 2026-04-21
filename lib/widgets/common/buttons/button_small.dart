@@ -11,7 +11,7 @@ class ButtonSmall extends StatelessWidget {
     required this.buttonText,
     required this.onPressed,
     this.icon,
-    this.iconAlignment,
+    this.iconAlignment = IconAlignment.start,
 
   });
 
@@ -23,9 +23,7 @@ class ButtonSmall extends StatelessWidget {
 
     if (icon != null) {
       return TextButton.icon(
-        iconAlignment: iconAlignment == IconAlignment.start
-          ? IconAlignment.start
-          : IconAlignment.end,
+        iconAlignment: iconAlignment,
         icon: Icon(icon),
         onPressed: onPressed,
         style: style,

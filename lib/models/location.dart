@@ -4,9 +4,6 @@ part 'location.g.dart';
 
 @HiveType(typeId: 0)
 class Location extends HiveObject {
-  @HiveField(0)
-  int id;
-
   @HiveField(1)
   double latitude;
 
@@ -14,16 +11,15 @@ class Location extends HiveObject {
   double longitude;
 
   @HiveField(3)
-  DateTime? createdAt;
+  DateTime createdAt;
 
   @HiveField(4)
   String? name;
 
   Location({
-    required this.id,
     required this.latitude,
     required this.longitude,
-    this.createdAt,
+    required this.createdAt,
     this.name,
   });
 }

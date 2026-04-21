@@ -18,8 +18,9 @@ class EllipsePainter extends CustomPainter {
 
 class ActiveSpotCard extends StatelessWidget {
   final Location item;
+  final String? distance;
 
-  const ActiveSpotCard({super.key, required this.item});
+  const ActiveSpotCard({super.key, required this.item, this.distance});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class ActiveSpotCard extends StatelessWidget {
         ],
       ),
       child: GestureDetector(
-        onTap: () => context.push('/active-spots/${item.id}'),
+        onTap: () => context.push('/active-spots/${item.key}'),
         child: Card(
           color: Theme.of(context).colorScheme.onSecondary,
           shadowColor: Colors.transparent,
@@ -70,16 +71,15 @@ class ActiveSpotCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(item.latitude.toString()),
                         item.name != null
                             ? Text(
                                 item.name!,
                                 style: Theme.of(context).textTheme.titleSmall,
                               )
                             : Container(),
-                        Text(
-                          item.latitude.toStringAsFixed(2) +
-                              item.longitude.toStringAsFixed(2),
-                        ),
+                        if (distance != null)
+                          Text(distance!),
                       ],
                     ),
                   ],

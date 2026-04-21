@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class ButtonMedium extends StatelessWidget {
   final String buttonText;
+  final VoidCallback? onPressed;
 
   const ButtonMedium({
     super.key,
     required this.buttonText,
+    required this.onPressed,
   });
 
   @override
@@ -30,7 +32,7 @@ class ButtonMedium extends StatelessWidget {
           shadowColor: Colors.transparent,
           shape: const StadiumBorder(),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         child: Text(buttonText),
       ),
     );
