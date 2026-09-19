@@ -1,0 +1,9 @@
+const String spotNotFound = 'Spot not found';
+const String removeButtonLabel = 'Remove';
+const String addNameButtonLabel = 'Add name';
+const String editNameButtonLabel = 'Edit name';
+const String addDescriptionButtonLabel = 'Add description';
+const String editDescriptionButtonLabel = 'Edit description';
+const String addNameFieldLabel = 'Add a name';
+const String editNameFieldLabel = 'Edit name';
+const int descriptionMaxLength = 200;

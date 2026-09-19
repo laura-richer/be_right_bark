@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,18 +11,12 @@ enum LocationPermissionStatus {
   serviceDisabled,
 }
 
-LocationPermissionStatus? _cachedStatus;
-
-LocationPermissionStatus get locationPermissionStatus =>
-    _cachedStatus ?? LocationPermissionStatus.denied;
-
-bool get hasLocationPermission =>
-    _cachedStatus == LocationPermissionStatus.granted;
+final locationPermissionProvider =
+    StateProvider<LocationPermissionStatus>((_) => LocationPermissionStatus.denied);
 
 Future<LocationPermissionStatus> initLocationPermission() async {
   if (!await Geolocator.isLocationServiceEnabled()) {
-    _cachedStatus = LocationPermissionStatus.serviceDisabled;
-    return _cachedStatus!;
+    return LocationPermissionStatus.serviceDisabled;
   }
 
   LocationPermission permission = await Geolocator.checkPermission();
@@ -36,8 +31,7 @@ Future<LocationPermissionStatus> initLocationPermission() async {
     }
   }
 
-  _cachedStatus = _mapPermission(permission);
-  return _cachedStatus!;
+  return _mapPermission(permission);
 }
 
 LocationPermissionStatus _mapPermission(LocationPermission permission) {

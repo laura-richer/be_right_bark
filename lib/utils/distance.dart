@@ -1,6 +1,8 @@
 import 'package:geolocator/geolocator.dart';
 
-String formatDistance(Position userPosition, double lat, double lng) {
+String formatDistance(Position? userPosition, double lat, double lng) {
+  if (userPosition == null) return 'Unknown distance';
+
   final meters = Geolocator.distanceBetween(
     userPosition.latitude,
     userPosition.longitude,
