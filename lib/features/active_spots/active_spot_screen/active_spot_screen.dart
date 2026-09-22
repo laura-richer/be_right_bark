@@ -13,9 +13,13 @@ import 'package:be_right_bark/widgets/confirmation/confirmation.dart';
 import 'package:be_right_bark/features/active_spots/active_spot_screen/constants.dart';
 import 'package:be_right_bark/utils/time.dart';
 import 'package:be_right_bark/widgets/form_text_field.dart';
+import 'package:be_right_bark/widgets/brb_dialog.dart';
 import 'package:be_right_bark/styles/spacers.dart';
 import 'package:be_right_bark/constants/name.dart';
 import 'package:be_right_bark/widgets/map_pin.dart';
+import 'package:be_right_bark/widgets/buttons/button_medium.dart';
+import 'package:be_right_bark/services/picked_up_service.dart';
+import 'package:be_right_bark/services/notification_service.dart';
 
 class ActiveSpotScreen extends ConsumerStatefulWidget {
   final int id;
@@ -29,9 +33,7 @@ class ActiveSpotScreen extends ConsumerStatefulWidget {
 
 class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
   final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  bool _removeConfirmationIsActive = false;
-
+  // final _descriptionController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -56,8 +58,7 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
 
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: BrbSpacers.md),
+      builder: (dialogContext) => BrbDialog(
         content: SizedBox(
           width: double.maxFinite,
           child: FormTextField(
@@ -76,17 +77,35 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
     );
   }
 
-  void _handleShowRemoveConfirmation() {
-    setState(() => _removeConfirmationIsActive = true);
-  }
-
-  void _handleCancelConfirmation() {
-    setState(() => _removeConfirmationIsActive = false);
-  }
-
   void _handleRemoveLocation(WidgetRef ref) {
-    ref.read(locationProvider.notifier).deleteLocation(widget.id);
-    context.pop();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BrbDialog(
+        content: Confirmation(
+          onConfirm: () {
+            ref.read(locationProvider.notifier).deleteLocation(widget.id);
+            Navigator.of(dialogContext).pop();
+            context.pop();
+          },
+          onCancel: () => Navigator.of(dialogContext).pop(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handlePickedUp(WidgetRef ref) async {
+    final location = ref.read(locationProvider.notifier).getByKey(widget.id);
+    if (location == null) return;
+
+    await incrementPickedUpCount();
+    await cancelSpotAlert(location.createdAt);
+    await ref.read(locationProvider.notifier).deleteLocation(widget.id);
+
+    final activeCount = ref.read(locationProvider).length;
+    await showOutstandingSummary(activeCount: activeCount);
+
+    if (!mounted) return;
+    context.go('/picked-up');
   }
 
   void _handleEditName(WidgetRef ref, String? currentName) {
@@ -97,21 +116,6 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
       maxLength: nameMaxLength,
       onSave: (value) =>
           ref.read(locationProvider.notifier).updateName(widget.id, value),
-    );
-  }
-
-  void _handleEditDescription(WidgetRef ref, String? currentDescription) {
-    _showEditDialog(
-      controller: _descriptionController,
-      currentValue: currentDescription ?? '',
-      label: currentDescription != null
-          ? editDescriptionButtonLabel
-          : addDescriptionButtonLabel,
-      maxLength: descriptionMaxLength,
-      isTextArea: true,
-      onSave: (value) => ref
-          .read(locationProvider.notifier)
-          .updateDescription(widget.id, value),
     );
   }
 
@@ -134,20 +138,12 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
               children: [
                 if (location.name != null) TitleMedium(text: location.name!),
                 const Spacer(),
-                if (!_removeConfirmationIsActive) ...[
-                  ButtonSmall(
-                    buttonText: removeButtonLabel,
-                    icon: Icons.delete,
-                    iconAlignment: IconAlignment.end,
-                    onPressed: () => _handleShowRemoveConfirmation(),
-                  ),
-                ],
-                if (_removeConfirmationIsActive) ...[
-                  Confirmation(
-                    onConfirm: () => _handleRemoveLocation(ref),
-                    onCancel: () => _handleCancelConfirmation(),
-                  ),
-                ],
+                ButtonSmall(
+                  buttonText: removeButtonLabel,
+                  icon: Icons.delete,
+                  iconAlignment: IconAlignment.end,
+                  onPressed: () => _handleRemoveLocation(ref),
+                ),
               ],
             ),
           ),
@@ -181,45 +177,42 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (userPosition != null)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (userPosition != null)
+                      TitleSmall(
+                        text: formatDistance(
+                          userPosition,
+                          location.latitude,
+                          location.longitude,
+                        ),
+                      ),
                     TitleSmall(
-                      text: formatDistance(
-                        userPosition,
-                        location.latitude,
-                        location.longitude,
+                      text: 'Marked ${formatTimestamp(location.createdAt)}',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: BrbSpacers.sm),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ButtonSmall(
+                        buttonText: location.name != null
+                            ? editNameButtonLabel
+                            : addNameButtonLabel,
+                        icon: Icons.edit,
+                        iconAlignment: IconAlignment.end,
+                        onPressed: () => _handleEditName(ref, location.name),
                       ),
                     ),
-                  TitleSmall(
-                    text: 'Marked ${formatTimestamp(location.createdAt)}',
-                  ),
-                ],
-              ),
-
-              const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ButtonSmall(
-                    buttonText: location.name != null
-                        ? editNameButtonLabel
-                        : addNameButtonLabel,
-                    icon: Icons.edit,
-                    iconAlignment: IconAlignment.end,
-                    onPressed: () => _handleEditName(ref, location.name),
-                  ),
-                  ButtonSmall(
-                    buttonText: location.description != null
-                        ? editDescriptionButtonLabel
-                        : addDescriptionButtonLabel,
-                    icon: Icons.article,
-                    iconAlignment: IconAlignment.end,
-                    onPressed: () =>
-                        _handleEditDescription(ref, location.description),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -227,6 +220,11 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [Text(location.description ?? '')],
+          ),
+          const SizedBox(height: BrbSpacers.xl),
+          ButtonMedium(
+            buttonText: pickedUpButtonLabel,
+            onPressed: () => _handlePickedUp(ref),
           ),
         ],
       ),

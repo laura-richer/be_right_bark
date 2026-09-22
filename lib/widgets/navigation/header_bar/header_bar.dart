@@ -40,6 +40,7 @@ class _HeaderBarState extends State<HeaderBar> {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
       title: const TitleLarge(text: appName),
+      centerTitle: true,
       leading: GoRouter.of(context).canPop()
           ? IconButton(
               iconSize: 20,

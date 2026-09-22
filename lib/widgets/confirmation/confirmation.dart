@@ -20,7 +20,6 @@ class Confirmation extends StatelessWidget {
         Text(confirmationTitle, style: Theme.of(context).textTheme.labelSmall),
         const SizedBox(width: BrbSpacers.xs),
         IconButton.filled(icon: const Icon(Icons.check), onPressed: onConfirm),
-        const SizedBox(width: BrbSpacers.xs),
         IconButton.outlined(
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.primary,

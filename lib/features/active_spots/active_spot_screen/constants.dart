@@ -1,5 +1,6 @@
 const String spotNotFound = 'Spot not found';
 const String removeButtonLabel = 'Remove';
+const String pickedUpButtonLabel = 'Picked up';
 const String addNameButtonLabel = 'Add name';
 const String editNameButtonLabel = 'Edit name';
 const String addDescriptionButtonLabel = 'Add description';

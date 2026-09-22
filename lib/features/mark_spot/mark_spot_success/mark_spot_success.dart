@@ -10,6 +10,7 @@ import 'package:be_right_bark/widgets/form_text_field.dart';
 import 'package:be_right_bark/widgets/confirmation/confirmation.dart';
 import 'package:be_right_bark/features/mark_spot/mark_spot_success/constants.dart';
 import 'package:be_right_bark/constants/name.dart';
+import 'package:be_right_bark/widgets/animations/spot_marked_animation.dart';
 
 class MarkSpotSuccess extends ConsumerStatefulWidget {
   final int spotKey;
@@ -70,20 +71,17 @@ class _MarkSpotSuccessState extends ConsumerState<MarkSpotSuccess> {
   @override
   Widget build(BuildContext context) {
     return Dialog.fullscreen(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(BrbSpacers.xl),
         child: Column(
           children: [
             const TitleLarge(text: spotMarkedTitle),
-            const SizedBox(height: BrbSpacers.xxl),
-            Icon(
-              Icons.check_circle_outline,
-              size: 100,
-              color: Theme.of(context).colorScheme.tertiary,
-            ),
-            const SizedBox(height: BrbSpacers.xxl),
+            const SizedBox(height: BrbSpacers.md),
+            const SpotMarkedAnimation(size: 220),
+            const SizedBox(height: BrbSpacers.xs),
             Text(
               spotMarkedMessage,
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: BrbSpacers.xxl),

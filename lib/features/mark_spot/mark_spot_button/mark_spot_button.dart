@@ -8,6 +8,7 @@ import 'package:be_right_bark/widgets/buttons/button_medium.dart';
 import 'package:be_right_bark/widgets/buttons/button_small.dart';
 import 'package:be_right_bark/widgets/buttons/button_large.dart';
 import 'package:be_right_bark/features/mark_spot/mark_spot_button/constants.dart';
+import 'package:be_right_bark/widgets/brb_dialog.dart';
 
 class MarkSpotButton extends ConsumerWidget {
   const MarkSpotButton({super.key});
@@ -56,28 +57,23 @@ class MarkSpotButton extends ConsumerWidget {
       builder: (dialogContext) {
         return PopScope(
           canPop: true,
-          child: Center(
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(BrbSpacers.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: BrbSpacers.sm),
-                    const Text(loadingMessage),
-                    const SizedBox(height: BrbSpacers.sm),
-                    ButtonSmall(
-                      buttonText: cancelButtonLabel,
-                      icon: Icons.close,
-                      onPressed: () {
-                        ref.read(markSpotControllerProvider.notifier).reset();
-                        Navigator.of(dialogContext).pop();
-                      },
-                    ),
-                  ],
+          child: BrbDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: BrbSpacers.sm),
+                const Text(loadingMessage),
+                const SizedBox(height: BrbSpacers.sm),
+                ButtonSmall(
+                  buttonText: cancelButtonLabel,
+                  icon: Icons.close,
+                  onPressed: () {
+                    ref.read(markSpotControllerProvider.notifier).reset();
+                    Navigator.of(dialogContext).pop();
+                  },
                 ),
-              ),
+              ],
             ),
           ),
         );
@@ -96,10 +92,12 @@ class MarkSpotButton extends ConsumerWidget {
   void _showSettingsDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => BrbDialog(
         title: Text(
           locationAccessTitle,
-          style: Theme.of(context).textTheme.titleMedium,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         content: const Text(locationAccessMessage),
         actions: [

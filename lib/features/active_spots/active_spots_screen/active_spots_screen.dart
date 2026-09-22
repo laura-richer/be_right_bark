@@ -8,6 +8,7 @@ import 'package:be_right_bark/providers/location_provider.dart';
 import 'package:be_right_bark/providers/user_position_provider.dart';
 import 'package:be_right_bark/widgets/confirmation/confirmation.dart';
 import 'package:be_right_bark/features/active_spots/active_spots_screen/constants.dart';
+import 'package:be_right_bark/widgets/brb_dialog.dart';
 
 class ActiveSpotsScreen extends ConsumerStatefulWidget {
   const ActiveSpotsScreen({super.key});
@@ -17,19 +18,19 @@ class ActiveSpotsScreen extends ConsumerStatefulWidget {
 }
 
 class _ActiveSpotsScreenState extends ConsumerState<ActiveSpotsScreen> {
-  bool _clearConfirmationIsActive = false;
-
-  void _handleShowClearConfirmation() {
-    setState(() => _clearConfirmationIsActive = true);
-  }
-
-  void _handleCancelConfirmation() {
-    setState(() => _clearConfirmationIsActive = false);
-  }
-
   void _handleClearLocations(WidgetRef ref) {
-    ref.read(locationProvider.notifier).clearLocations();
-    setState(() => _clearConfirmationIsActive = false);
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BrbDialog(
+        content: Confirmation(
+          onConfirm: () {
+            ref.read(locationProvider.notifier).clearLocations();
+            Navigator.of(dialogContext).pop();
+          },
+          onCancel: () => Navigator.of(dialogContext).pop(),
+        ),
+      ),
+    );
   }
 
   @override
@@ -46,20 +47,12 @@ class _ActiveSpotsScreenState extends ConsumerState<ActiveSpotsScreen> {
             children: [
               const TitleMedium(text: activeSpotsTitle),
               if (locations.isNotEmpty)
-                if (!_clearConfirmationIsActive) ...[
-                  ButtonSmall(
-                    buttonText: clearAllButtonLabel,
-                    icon: Icons.close,
-                    iconAlignment: IconAlignment.end,
-                    onPressed: () => _handleShowClearConfirmation(),
-                  ),
-                ],
-              if (_clearConfirmationIsActive) ...[
-                Confirmation(
-                  onConfirm: () => _handleClearLocations(ref),
-                  onCancel: () => _handleCancelConfirmation(),
+                ButtonSmall(
+                  buttonText: clearAllButtonLabel,
+                  icon: Icons.close,
+                  iconAlignment: IconAlignment.end,
+                  onPressed: () => _handleClearLocations(ref),
                 ),
-              ],
             ],
           ),
         ),

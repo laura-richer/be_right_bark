@@ -8,10 +8,10 @@ final List<BottomTabItem> bottomTabs = [
     icon: Icons.add_location_alt_outlined,
   ),
   BottomTabItem(
-    label: 'Active spots',
+    label: 'Spots',
     path: '/active-spots',
     icon: Icons.format_list_bulleted,
   ),
   BottomTabItem(label: 'Map', path: '/map', icon: Icons.map),
-  BottomTabItem(label: 'Settings', path: '/stylesetter', icon: Icons.settings),
+  BottomTabItem(label: 'Settings', path: '/settings', icon: Icons.settings),
 ];

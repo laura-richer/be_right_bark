@@ -48,28 +48,18 @@ class ActiveSpotCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(BrbSpacers.sm),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const MapPin(),
-                    const SizedBox(width: BrbSpacers.sm),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        item.name != null
-                            ? TitleSmall(text: item.name!)
-                            : const SizedBox.shrink(),
-                        Row(
-                          children: [
-                            Text(distance),
-                            const Text(' - '),
-                            Text('Marked ${formatTimestamp(item.createdAt)}'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                const MapPin(),
+                const SizedBox(width: BrbSpacers.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (item.name != null) TitleSmall(text: item.name!),
+                      Text(distance),
+                      Text('Marked ${formatTimestamp(item.createdAt)}'),
+                    ],
+                  ),
                 ),
                 Icon(
                   Icons.chevron_right,

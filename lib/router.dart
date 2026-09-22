@@ -6,6 +6,7 @@ import 'package:be_right_bark/features/mark_spot/mark_spot_screen/mark_spot_scre
 import 'package:be_right_bark/features/map/map_screen.dart';
 import 'package:be_right_bark/features/settings/settings_screen.dart';
 import 'package:be_right_bark/features/stylesetter.dart';
+import 'package:be_right_bark/features/picked_up/pick_up_success_screen.dart';
 import 'package:be_right_bark/widgets/app_container.dart';
 
 // Page<void> _noTransitionPage(GoRouterState state, Widget child) {
@@ -77,6 +78,11 @@ final router = GoRouter(
               _fadePageTransition(state, const StylesetterScreen()),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/picked-up',
+      pageBuilder: (context, state) =>
+          _fadePageTransition(state, const PickUpSuccessScreen()),
     ),
   ],
 );

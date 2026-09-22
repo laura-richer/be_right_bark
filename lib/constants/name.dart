@@ -1,1 +1,1 @@
-const int nameMaxLength = 25;
+const int nameMaxLength = 20;

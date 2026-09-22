@@ -61,7 +61,6 @@ class FormTextField extends StatelessWidget {
             onSave(value.isEmpty ? null : value);
           },
         ),
-        const SizedBox(width: BrbSpacers.xs),
         IconButton.outlined(
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.primary,
