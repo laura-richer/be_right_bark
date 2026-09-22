@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+  <key>NSLocationWhenInUseUsageDescription</key>
+	<string>Be Right Bark uses your location to mark where you left a bag.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Be Right Bark checks your location in the background so it can remind you when you are walking back towards a bag you left. Your location stays on your device.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
