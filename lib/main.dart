@@ -5,8 +5,10 @@ import 'package:be_right_bark/router.dart';
 import 'package:be_right_bark/styles/theme.dart';
 import 'package:be_right_bark/models/location.dart';
 import 'package:be_right_bark/models/spot_status.dart';
+import 'package:be_right_bark/utils/navigation.dart';
 import 'package:be_right_bark/utils/permissions.dart';
 import 'package:be_right_bark/utils/hive.dart';
+import 'package:be_right_bark/services/geofence_service.dart';
 import 'package:be_right_bark/services/notification_service.dart';
 
 void main() async {
@@ -18,6 +20,8 @@ void main() async {
 
   await openHiveBox<Location>('locations');
   await initNotifications();
+  await initGeofencing();
+  await removeOrphanFences(Hive.box<Location>('locations').values);
   final permissionStatus = await initLocationPermission();
   await handleNotificationColdStart();
 
@@ -31,8 +35,27 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  AppLifecycleListener? _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onPause: dismissDialogs);
+  }
+
+  @override
+  void dispose() {
+    _lifecycle?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

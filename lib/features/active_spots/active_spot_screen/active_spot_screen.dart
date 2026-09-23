@@ -129,15 +129,74 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
       return const Center(child: Text(spotNotFound));
     }
 
-    return Center(
-      child: Column(
-        children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 35),
-            child: Row(
+    return Column(
+      children: [
+        SingleChildScrollView(
+          padding: BrbSpacers.screenPadding,
+          child: Column(
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 35),
+                child: Row(
+                  children: [
+                    if (location.name != null)
+                      TitleMedium(text: location.name!),
+                    const Spacer(),
+                    ButtonSmall(
+                      buttonText: location.name != null
+                          ? ''
+                          : addNameButtonLabel,
+                      icon: Icons.edit,
+                      iconAlignment: IconAlignment.end,
+                      onPressed: () => _handleEditName(ref, location.name),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: BrbSpacers.sm),
+              SizedBox(
+                height: 200,
+                child: FlutterMap(
+                  options: MapOptions(
+                    initialCenter: LatLng(
+                      location.latitude,
+                      location.longitude,
+                    ),
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.example.be_right_bark',
+                      tileProvider: widget.tileProvider,
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: LatLng(location.latitude, location.longitude),
+                          alignment: Alignment.topCenter,
+                          rotate: true,
+                          child: const MapPin(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                if (location.name != null) TitleMedium(text: location.name!),
-                const Spacer(),
+                ButtonMedium(
+                  icon: Icons.where_to_vote,
+                  buttonText: pickedUpButtonLabel,
+                  onPressed: () => _handlePickedUp(ref),
+                ),
+                const SizedBox(height: BrbSpacers.xl),
                 ButtonSmall(
                   buttonText: removeButtonLabel,
                   icon: Icons.delete,
@@ -147,87 +206,30 @@ class _ActiveSpotScreenState extends ConsumerState<ActiveSpotScreen> {
               ],
             ),
           ),
-          const SizedBox(height: BrbSpacers.sm),
-          SizedBox(
-            height: 200,
-            child: FlutterMap(
-              options: MapOptions(
-                initialCenter: LatLng(location.latitude, location.longitude),
-              ),
+        ),
+        ColoredBox(
+          color: Theme.of(context).colorScheme.surface,
+          child: Padding(
+            padding: const EdgeInsets.all(BrbSpacers.sm),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.be_right_bark',
-                  tileProvider: widget.tileProvider,
-                ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: LatLng(location.latitude, location.longitude),
-                      alignment: Alignment.topCenter,
-                      rotate: true,
-                      child: const MapPin(),
+                if (userPosition != null)
+                  TitleSmall(
+                    text: formatDistance(
+                      userPosition,
+                      location.latitude,
+                      location.longitude,
                     ),
-                  ],
+                  ),
+                TitleSmall(
+                  text: 'Marked ${formatTimestamp(location.createdAt)}',
                 ),
               ],
             ),
           ),
-          const SizedBox(height: BrbSpacers.sm),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (userPosition != null)
-                      TitleSmall(
-                        text: formatDistance(
-                          userPosition,
-                          location.latitude,
-                          location.longitude,
-                        ),
-                      ),
-                    TitleSmall(
-                      text: 'Marked ${formatTimestamp(location.createdAt)}',
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: BrbSpacers.sm),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ButtonSmall(
-                        buttonText: location.name != null
-                            ? editNameButtonLabel
-                            : addNameButtonLabel,
-                        icon: Icons.edit,
-                        iconAlignment: IconAlignment.end,
-                        onPressed: () => _handleEditName(ref, location.name),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: BrbSpacers.md),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text(location.description ?? '')],
-          ),
-          const SizedBox(height: BrbSpacers.xl),
-          ButtonMedium(
-            buttonText: pickedUpButtonLabel,
-            onPressed: () => _handlePickedUp(ref),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

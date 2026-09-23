@@ -9,8 +9,8 @@ class ButtonLarge extends StatelessWidget {
   const ButtonLarge({
     super.key,
     required this.buttonText,
-    this.image,
     required this.onPressed,
+    this.image,
   });
 
   @override

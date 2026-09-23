@@ -31,6 +31,7 @@ class _PickUpSuccessScreenState extends State<PickUpSuccessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(BrbSpacers.xl),
         child: Column(
@@ -56,7 +57,7 @@ class _PickUpSuccessScreenState extends State<PickUpSuccessScreen> {
             const SizedBox(height: BrbSpacers.xxl),
             ButtonMedium(
               buttonText: doneButtonLabel,
-              onPressed: () => context.go('/active-spots'),
+              onPressed: () => context.go('/mark-spot'),
             ),
           ],
         ),

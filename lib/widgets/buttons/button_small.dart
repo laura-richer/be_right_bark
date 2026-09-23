@@ -20,7 +20,9 @@ class ButtonSmall extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = ButtonStyle(
-      padding: WidgetStateProperty.all(const EdgeInsets.all(BrbSpacers.sm)),
+      padding: WidgetStateProperty.all(
+        const EdgeInsets.symmetric(horizontal: BrbSpacers.sm),
+      ),
       foregroundColor: WidgetStateProperty.all(
         filled == true
             ? Theme.of(context).colorScheme.onPrimary

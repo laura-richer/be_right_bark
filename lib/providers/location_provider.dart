@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:be_right_bark/models/location.dart';
+import 'package:be_right_bark/services/geofence_service.dart';
 
 class LocationNotifier extends Notifier<List<Location>> {
   static const String boxName = 'locations';
@@ -16,6 +17,7 @@ class LocationNotifier extends Notifier<List<Location>> {
 
   Future<int> addLocation(Location location) async {
     final key = await _box.add(location);
+    await registerAndRecordFences(location);
     state = _box.values.toList();
     return key;
   }
@@ -35,11 +37,14 @@ class LocationNotifier extends Notifier<List<Location>> {
   }
 
   Future<void> deleteLocation(int key) async {
+    final spot = _box.get(key);
+    if (spot != null) await removeSpotFences(spot.createdAt);
     await _box.delete(key);
     state = _box.values.toList();
   }
 
   Future<void> clearLocations() async {
+    await removeAllSpotFences();
     await _box.clear();
     state = _box.values.toList();
   }

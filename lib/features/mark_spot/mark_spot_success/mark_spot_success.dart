@@ -86,7 +86,7 @@ class _MarkSpotSuccessState extends ConsumerState<MarkSpotSuccess> {
             ),
             const SizedBox(height: BrbSpacers.xxl),
             ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 40),
+              constraints: const BoxConstraints(minHeight: BrbSpacers.xxl),
               child: Column(
                 children: [
                   if (!_nameFieldIsActive && !_deleteConfirmIsActive) ...[

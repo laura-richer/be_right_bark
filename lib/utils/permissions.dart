@@ -45,3 +45,25 @@ LocationPermissionStatus _mapPermission(LocationPermission permission) {
       return LocationPermissionStatus.denied;
   }
 }
+
+/// Whether the app can see location while it's closed, which geofences need
+/// in order to fire. "While using the app" isn't enough.
+Future<bool> hasBackgroundLocation() async {
+  return await Geolocator.checkPermission() == LocationPermission.always;
+}
+
+/// Asks for "Allow all the time".
+///
+/// iOS can upgrade from "While using" with a system prompt, but only once.
+/// Android 11 and later never offer it in a prompt at all. So if the request
+/// doesn't come back as always, this opens the app's settings page for the
+/// user to change it there.
+///
+/// Returns true only when the permission is already granted on return.
+Future<bool> requestBackgroundLocation() async {
+  final permission = await Geolocator.requestPermission();
+  if (permission == LocationPermission.always) return true;
+
+  await Geolocator.openAppSettings();
+  return false;
+}

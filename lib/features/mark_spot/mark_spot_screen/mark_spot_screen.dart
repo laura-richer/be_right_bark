@@ -18,7 +18,9 @@ class MarkSpotScreen extends ConsumerWidget {
     final locations = ref.watch(locationProvider);
     final userPosition = ref.watch(userPositionProvider).valueOrNull;
 
-    return Column(
+    return Padding(
+      padding: BrbSpacers.screenPadding,
+      child: Column(
       children: [
         if (locations.isNotEmpty)
           Expanded(
@@ -53,6 +55,7 @@ class MarkSpotScreen extends ConsumerWidget {
           ),
         const Expanded(flex: 2, child: Center(child: MarkSpotButton())),
       ],
+      ),
     );
   }
 }

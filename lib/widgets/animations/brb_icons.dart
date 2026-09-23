@@ -59,6 +59,47 @@ void paintPaw(Canvas canvas, Paint paint) {
   canvas.drawPath(_pawPad, paint);
 }
 
+final Path whereToVotePinPath = Path()
+  ..moveTo(480, 774.0)
+  ..quadraticBezierTo(602, 662.0, 661, 570.5)
+  ..quadraticBezierTo(720, 479.0, 720, 408.0)
+  ..quadraticBezierTo(720, 299.0, 650.5, 229.5)
+  ..quadraticBezierTo(581, 160.0, 480, 160.0)
+  ..quadraticBezierTo(379, 160.0, 309.5, 229.5)
+  ..quadraticBezierTo(240, 299.0, 240, 408.0)
+  ..quadraticBezierTo(240, 479.0, 299, 570.5)
+  ..quadraticBezierTo(358, 662.0, 480, 774.0)
+  ..close()
+  ..moveTo(480, 880.0)
+  ..quadraticBezierTo(319, 743.0, 239.5, 625.5)
+  ..quadraticBezierTo(160, 508.0, 160, 408.0)
+  ..quadraticBezierTo(160, 258.0, 256.5, 169.0)
+  ..quadraticBezierTo(353, 80.0, 480, 80.0)
+  ..quadraticBezierTo(607, 80.0, 703.5, 169.0)
+  ..quadraticBezierTo(800, 258.0, 800, 408.0)
+  ..quadraticBezierTo(800, 508.0, 720.5, 625.5)
+  ..quadraticBezierTo(641, 743.0, 480, 880.0)
+  ..close()
+  ..moveTo(480, 400.0)
+  ..close();
+
+final Path whereToVoteTickPath = Path()
+  ..moveTo(438, 534.0)
+  ..lineTo(636, 336.0)
+  ..lineTo(579, 279.0)
+  ..lineTo(438, 420.0)
+  ..lineTo(382, 364.0)
+  ..lineTo(325, 421.0)
+  ..lineTo(438, 534.0)
+  ..close();
+
+/// The line the tick is drawn along, used to reveal it stroke first rather
+/// than wiping it on.
+final Path _tickStroke = Path()
+  ..moveTo(353, 393)
+  ..lineTo(438, 478)
+  ..lineTo(607, 308);
+
 /// A five point star in a 20 x 20 box, used by the confetti.
 final Path starPath = Path()
   ..moveTo(10, 1)
@@ -129,51 +170,20 @@ final Path checkPath = Path()
     ..lineTo(382, 720)
     ..close();
 
-/// Draws the paw, optionally with the check on its pad.
-///
-/// [checkProgress] runs 0 to 1 and wipes the check on from left to right, so
-/// it reads as being drawn.
+/// Draws the paw.
 class PawPainter extends CustomPainter {
-  const PawPainter({
-    required this.color,
-    this.checkColor,
-    this.checkProgress = 0,
-  });
+  const PawPainter({required this.color});
 
   final Color color;
-  final Color? checkColor;
-  final double checkProgress;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.scale(size.width / pawBox);
     paintPaw(canvas, Paint()..color = color);
-
-    final check = checkColor;
-    if (check == null || checkProgress <= 0) return;
-
-    canvas
-      ..save()
-      ..translate(_checkOffset.dx, _checkOffset.dy)
-      ..scale(_checkScale)
-      ..clipRect(
-        Rect.fromLTWH(
-          0,
-          0,
-          _checkStartX + _checkWidth * checkProgress.clamp(0, 1),
-          materialIconBox,
-        ),
-      )
-      ..drawPath(checkPath, Paint()..color = check)
-      ..restore();
   }
 
   @override
-  bool shouldRepaint(PawPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.checkColor != checkColor ||
-        oldDelegate.checkProgress != checkProgress;
-  }
+  bool shouldRepaint(PawPainter oldDelegate) => oldDelegate.color != color;
 }
 
 /// Draws the location pin with a knockout halo, so it sits cleanly on top of
@@ -208,5 +218,68 @@ class PinPainter extends CustomPainter {
   bool shouldRepaint(PinPainter oldDelegate) {
     return oldDelegate.color != color ||
         oldDelegate.knockoutColor != knockoutColor;
+  }
+}
+
+/// Draws the where_to_vote badge: a pin with a tick in it, with the same
+/// knockout halo as [PinPainter] so it sits cleanly on the paw.
+///
+/// [tickProgress] runs 0 to 1 and draws the tick along its stroke.
+class WhereToVotePainter extends CustomPainter {
+  const WhereToVotePainter({
+    required this.color,
+    required this.knockoutColor,
+    this.tickProgress = 1,
+  });
+
+  final Color color;
+  final Color knockoutColor;
+  final double tickProgress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.scale(size.width / materialIconBox);
+
+    canvas
+      ..drawPath(locationPinOutlinePath, Paint()..color = knockoutColor)
+      ..drawPath(
+        locationPinOutlinePath,
+        Paint()
+          ..color = knockoutColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 80
+          ..strokeJoin = StrokeJoin.round,
+      )
+      ..drawPath(whereToVotePinPath, Paint()..color = color);
+
+    if (tickProgress <= 0) return;
+    if (tickProgress >= 1) {
+      canvas.drawPath(whereToVoteTickPath, Paint()..color = color);
+      return;
+    }
+
+    // Keep only the part of the tick the stroke has reached so far.
+    final metric = _tickStroke.computeMetrics().first;
+    final drawn = metric.extractPath(0, metric.length * tickProgress);
+
+    canvas
+      ..saveLayer(const Rect.fromLTWH(0, 0, materialIconBox, materialIconBox),
+          Paint())
+      ..drawPath(whereToVoteTickPath, Paint()..color = color)
+      ..drawPath(
+        drawn,
+        Paint()
+          ..blendMode = BlendMode.dstIn
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 150,
+      )
+      ..restore();
+  }
+
+  @override
+  bool shouldRepaint(WhereToVotePainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.knockoutColor != knockoutColor ||
+        oldDelegate.tickProgress != tickProgress;
   }
 }

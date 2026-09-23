@@ -38,7 +38,9 @@ class _ActiveSpotsScreenState extends ConsumerState<ActiveSpotsScreen> {
     final locations = ref.watch(locationProvider);
     final userPosition = ref.watch(userPositionProvider).valueOrNull;
 
-    return Column(
+    return Padding(
+      padding: BrbSpacers.screenPadding,
+      child: Column(
       children: [
         ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 35),
@@ -66,6 +68,7 @@ class _ActiveSpotsScreenState extends ConsumerState<ActiveSpotsScreen> {
           ),
         if (locations.isEmpty) const Text('No marked spots yet.'),
       ],
+      ),
     );
   }
 }

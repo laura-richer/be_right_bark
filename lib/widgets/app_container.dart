@@ -37,10 +37,7 @@ class _AppContainerState extends State<AppContainer> {
     return Scaffold(
       appBar: const HeaderBar(),
       bottomNavigationBar: const BottomTabs(),
-      body: Padding(
-        padding: const EdgeInsets.all(BrbSpacers.lg),
-        child: widget.child,
-      ),
+      body: widget.child,
     );
   }
 }

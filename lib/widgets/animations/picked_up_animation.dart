@@ -11,11 +11,15 @@ import 'package:be_right_bark/widgets/animations/brb_icons.dart';
 /// three and a half seconds in total, though the paw and check are done in
 /// under one.
 class PickedUpAnimation extends StatefulWidget {
-  const PickedUpAnimation({super.key, this.size = 300});
+  const PickedUpAnimation({super.key, this.size = 300, this.backgroundColor});
 
   /// Width and height of the whole stage, confetti included. The paw takes up
   /// the middle 62% of it.
   final double size;
+
+  /// Colour behind the icon, used for the knockout around the badge.
+  /// Defaults to the theme surface colour.
+  final Color? backgroundColor;
 
   @override
   State<PickedUpAnimation> createState() => _PickedUpAnimationState();
@@ -29,6 +33,9 @@ class _PickedUpAnimationState extends State<PickedUpAnimation>
   static const double _pawTop = 0.146;
   static const double _pawSize = 0.768;
   static const double _pawTilt = -15 * math.pi / 180;
+  static const double _badgeLeft = 0.54;
+  static const double _badgeTop = 0.21;
+  static const double _badgeSize = 0.48;
 
   late final AnimationController _controller = AnimationController(
     vsync: this,
@@ -40,9 +47,24 @@ class _PickedUpAnimationState extends State<PickedUpAnimation>
     curve: const Interval(0, 0.55 / _totalSeconds, curve: Cubic(0.34, 1.7, 0.64, 1)),
   );
 
-  late final Animation<double> _check = CurvedAnimation(
+  /// The badge lands on the paw just after it settles.
+  late final Animation<double> _badgeScale = CurvedAnimation(
     parent: _controller,
-    curve: const Interval(0.5 / _totalSeconds, 0.9 / _totalSeconds, curve: Curves.easeOut),
+    curve: const Interval(
+      0.35 / _totalSeconds,
+      0.8 / _totalSeconds,
+      curve: Cubic(0.34, 1.8, 0.64, 1),
+    ),
+  );
+
+  /// Then the tick draws itself inside it.
+  late final Animation<double> _tick = CurvedAnimation(
+    parent: _controller,
+    curve: const Interval(
+      0.75 / _totalSeconds,
+      1.15 / _totalSeconds,
+      curve: Curves.easeOut,
+    ),
   );
 
   late final List<_Confetto> _behind;
@@ -55,8 +77,8 @@ class _PickedUpAnimationState extends State<PickedUpAnimation>
     final random = math.Random();
     // Each wave has a layer behind the paw and a layer in front, for depth.
     List<_Confetto> layer() => [
-          ..._Confetto.wave(random, count: 12, spread: math.pi * 1.9, minDistance: 55, distanceRange: 45, lift: 1, baseDuration: 1.8, baseDelay: 0.4, originY: 0),
-          ..._Confetto.wave(random, count: 11, spread: math.pi * 1.3, minDistance: 75, distanceRange: 55, lift: 1.15, baseDuration: 2.0, baseDelay: 0.85, originY: -0.06),
+          ..._Confetto.wave(random, count: 12, spread: math.pi * 1.9, minDistance: 55, distanceRange: 45, lift: 1, baseDuration: 1.8, baseDelay: 0.45, originY: 0),
+          ..._Confetto.wave(random, count: 11, spread: math.pi * 1.3, minDistance: 75, distanceRange: 55, lift: 1.15, baseDuration: 2.0, baseDelay: 0.9, originY: -0.06),
         ];
     _behind = layer();
     _inFront = layer();
@@ -87,15 +109,22 @@ class _PickedUpAnimationState extends State<PickedUpAnimation>
   Widget build(BuildContext context) {
     final s = widget.size;
     final art = s * _artFraction;
+    final knockout =
+        widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
 
     return Semantics(
       image: true,
       label: 'Bag picked up',
+      // Only the paw's area takes up space in the layout. The confetti stage
+      // is larger and paints beyond it, over the surrounding content.
       child: SizedBox.square(
-        dimension: s,
-        // Remove this ClipRect to let confetti fall across the whole screen.
-        child: ClipRect(
-          child: AnimatedBuilder(
+        dimension: art,
+        child: OverflowBox(
+          maxWidth: s,
+          maxHeight: s,
+          child: SizedBox.square(
+            dimension: s,
+            child: AnimatedBuilder(
             animation: _controller,
             builder: (context, _) {
               final seconds = _controller.value * _totalSeconds;
@@ -121,12 +150,26 @@ class _PickedUpAnimationState extends State<PickedUpAnimation>
                               angle: _pawTilt,
                               child: Transform.scale(
                                 scale: _pawScale.value,
-                                child: CustomPaint(
+                                child: const CustomPaint(
                                   painter: PawPainter(
                                     color: BrbColors.yellow,
-                                    checkColor: BrbColors.green,
-                                    checkProgress: _check.value,
                                   ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: art * _badgeLeft,
+                            top: art * _badgeTop,
+                            width: art * _badgeSize,
+                            height: art * _badgeSize,
+                            child: Transform.scale(
+                              scale: _badgeScale.value,
+                              child: CustomPaint(
+                                painter: WhereToVotePainter(
+                                  color: BrbColors.green,
+                                  knockoutColor: knockout,
+                                  tickProgress: _tick.value,
                                 ),
                               ),
                             ),
@@ -144,6 +187,7 @@ class _PickedUpAnimationState extends State<PickedUpAnimation>
               );
             },
           ),
+        ),
         ),
       ),
     );

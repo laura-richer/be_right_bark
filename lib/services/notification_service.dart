@@ -5,6 +5,8 @@ import 'package:be_right_bark/models/location.dart';
 import 'package:be_right_bark/router.dart';
 import 'package:be_right_bark/models/spot_status.dart';
 import 'package:be_right_bark/services/picked_up_service.dart';
+import 'package:be_right_bark/services/geofence_service.dart';
+import 'package:be_right_bark/utils/navigation.dart';
 
 /// Channel for the two spot alerts. High importance - these are the point of
 /// the app, so they should make a sound and appear as a heads-up.
@@ -55,6 +57,8 @@ Future<void> _resolveInBackgroundIsolate(NotificationResponse response) async {
   final resolution = _resolutionFor(response.actionId);
   if (key == null || resolution == null) return;
 
+  await initGeofencing();
+
   await Hive.initFlutter();
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(LocationAdapter());
@@ -80,6 +84,7 @@ Future<void> handleNotificationResponse(NotificationResponse response) async {
 
   // No action id means the user tapped the notification body.
   if (resolution == null) {
+    dismissDialogs();
     router.go('/active-spots/$key');
     return;
   }
@@ -127,7 +132,8 @@ Future<void> _applyResolution(
 
   await cancelSpotAlert(spot.createdAt);
 
-  // TODO(step 3): if transition.removeFences, deregister the two geofences
+  if (transition.removeFences) await removeSpotFences(spot.createdAt);
+
   // before deleting, and retry on next launch if that call throws.
   if (transition.status == SpotStatus.collected) {
     await incrementPickedUpCount();

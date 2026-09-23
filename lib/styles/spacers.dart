@@ -1,3 +1,5 @@
+import 'package:flutter/painting.dart';
+
 abstract final class BrbSpacers {
   static const xxl = 48.0;
   static const xl = 32.0;
@@ -5,4 +7,6 @@ abstract final class BrbSpacers {
   static const md = 20.0;
   static const sm = 12.0;
   static const xs = 8.0;
+
+  static const screenPadding = EdgeInsets.all(md);
 }
